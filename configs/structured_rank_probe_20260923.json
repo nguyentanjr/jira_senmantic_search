@@ -1,0 +1,12 @@
+{
+  "purpose": "Test whether explicit business/actual/expected evidence can improve the current issue-flow ranking without changing candidates or embeddings",
+  "candidate_source": "Unchanged production issue hybrid, top 100, query:/query:",
+  "rerank_scope": 100,
+  "method": "Min-max normalize the current hybrid score inside its returned pool, then add the existing duplicate-pipeline positive structured bonus capped at 0.15",
+  "structured_fields": ["function", "module", "domain", "api", "error_code", "entity", "field", "action", "provider", "channel", "expected_behavior", "observed_behavior"],
+  "contradiction_policy": "Do not subtract conflicts in ranking; preserve useful cross-channel/actor related issues. Conflict remains suitable for labeling, not this recall-oriented ordering probe.",
+  "weights": "Frozen values from configs/dup_v2_frozen.json; no fit or sweep on the 204 labels",
+  "evaluation": "All 40 reviewed queries; grade 1 and 2 are relevant; unjudged corpus issues remain unknown",
+  "go_no_go": "Known macro R@10 improves, R@100 unchanged, no connected component loses R@10, judged-pool nDCG does not decrease, and known grade-0 exposure@10 does not increase",
+  "deployment": "A pass is only a development signal because these AI labels are not an independent holdout"
+}

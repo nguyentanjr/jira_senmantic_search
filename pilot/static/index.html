@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Pilot tìm kiếm issue Jira theo ngữ nghĩa">
+  <title>Issue Lens — Semantic Search Pilot</title>
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Issue Lens, trang chủ">
+      <span class="brand-mark" aria-hidden="true">IL</span>
+      <span><strong>Issue Lens</strong><small>Semantic search pilot</small></span>
+    </a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow">Khai thác tri thức Jira đã có</div>
+      <h1>Tìm lại cách xử lý,<br><em>không điều tra từ đầu.</em></h1>
+      <p>Diễn đạt vấn đề theo cách của bạn hoặc bắt đầu từ một issue đang có. Hệ thống tìm theo cả ý nghĩa lẫn tín hiệu kỹ thuật.</p>
+    </section>
+
+    <section class="workspace" aria-label="Tìm kiếm issue">
+      <div class="search-panel">
+        <div class="flow-tabs" role="tablist" aria-label="Chọn luồng tìm kiếm">
+          <button class="flow-tab active" id="tab-text" type="button" role="tab" aria-selected="true" data-flow="text">
+            <span class="tab-number">01</span>
+            <span><strong>Mô tả vấn đề</strong><small>Tìm chủ động bằng ngôn ngữ tự nhiên</small></span>
+          </button>
+          <button class="flow-tab" id="tab-issue" type="button" role="tab" aria-selected="false" data-flow="issue">
+            <span class="tab-number">02</span>
+            <span><strong>Từ một issue</strong><small>Gợi ý issue lịch sử tương tự</small></span>
+          </button>
+        </div>
+
+        <form id="search-form">
+          <div id="text-input-wrap" class="input-wrap">
+            <label for="query">Bạn đang gặp vấn đề gì?</label>
+            <textarea id="query" rows="4" maxlength="5000" placeholder="Ví dụ: Người dùng không đăng nhập được sau khi đổi mật khẩu…"></textarea>
+            <div class="input-foot"><span>Có thể nhập tiếng Việt không dấu, mã lỗi, exception hoặc tên service.</span><span id="char-count">0 / 5.000</span></div>
+          </div>
+
+          <div id="issue-input-wrap" class="input-wrap hidden">
+            <label for="issue-key">Issue đang điều tra</label>
+            <div class="issue-combobox">
+              <input id="issue-key" type="text" autocomplete="off" placeholder="Nhập mã issue, ví dụ RO-11708" aria-autocomplete="list" aria-controls="suggestions">
+              <div id="suggestions" class="suggestions hidden" role="listbox"></div>
+            </div>
+            <div class="input-foot"><span>Issue nguồn sẽ tự động được loại khỏi kết quả.</span></div>
+          </div>
+
+          <div class="search-actions">
+            <button class="primary-button" id="submit-button" type="submit">
+              <span>Tìm issue tương tự</span><b aria-hidden="true">→</b>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <aside class="filter-panel" aria-label="Bộ lọc metadata">
+        <div class="filter-head"><div><span class="eyebrow">Thu hẹp tập ứng viên</span><h2>Bộ lọc</h2></div><button id="clear-filters" type="button">Xóa</button></div>
+        <label>Dự án<select id="filter-project"><option value="">Tất cả dự án</option></select></label>
+        <label>Service / component<select id="filter-component"><option value="">Tất cả service</option></select></label>
+        <div class="filter-grid">
+          <label>Trạng thái<select id="filter-status"><option value="">Tất cả</option></select></label>
+          <label>Ưu tiên<select id="filter-priority"><option value="">Tất cả</option></select></label>
+        </div>
+        <fieldset>
+          <legend>Ngày tạo</legend>
+          <div class="date-row"><label>Từ<input id="filter-from" type="date"></label><span>—</span><label>Đến<input id="filter-to" type="date"></label></div>
+        </fieldset>
+        <div class="prefilter-note"><span aria-hidden="true">↳</span><p>Lọc trước khi xếp hạng, nên không làm mất kết quả tốt chỉ vì top đầu nằm ngoài điều kiện.</p></div>
+      </aside>
+    </section>
+
+    <section class="results-section hidden" id="results-section" aria-live="polite">
+      <div class="results-head">
+        <div><span class="eyebrow">Kết quả xếp hạng</span><h2 id="results-title">Issue tương tự</h2></div>
+      </div>
+      <div class="feedback-toggle-row">
+        <label class="switch">
+          <input type="checkbox" id="feedback-toggle" checked>
+          <span class="switch-track" aria-hidden="true"></span>
+          <span>Đánh giá kết quả <small>(tùy chọn, giúp cải thiện công cụ)</small></span>
+        </label>
+      </div>
+      <div class="review-mode hidden" id="review-mode">
+        <strong>Nếu tiện, hãy chấm cả 5 kết quả đầu của lượt này (không bắt buộc).</strong>
+        <span id="review-progress">Đã chấm 0/5 kết quả đầu.</span>
+      </div>
+      <div class="query-feedback hidden" id="query-feedback">
+        <div class="query-feedback-main">
+          <button type="button" id="no-answer-button" aria-pressed="false">Không có đáp án phù hợp trong top 10</button>
+          <span class="feedback-count" id="feedback-count" aria-live="polite"></span>
+          <span class="feedback-hint">Có thể đổi đánh giá bất cứ lúc nào; dùng “Xóa đánh giá” để bỏ hẳn.</span>
+        </div>
+        <label>Ghi chú cho cả lượt tìm kiếm
+          <input id="query-note" maxlength="500" placeholder="Lưu cùng “Không có đáp án” · Enter để lưu">
+        </label>
+      </div>
+      <div class="results-list" id="results-list"></div>
+    </section>
+
+    <section class="empty-state" id="welcome-state">
+      <div class="empty-orbit" aria-hidden="true"><span></span></div>
+      <h2>Một lần tìm, nhiều năm kinh nghiệm.</h2>
+      <p>Kết quả sẽ hiển thị đoạn nội dung khớp, trạng thái, resolution đã ghi nhận và liên kết về Jira gốc.</p>
+    </section>
+
+    <p class="compare-link"><a href="/compare">So sánh keyword / semantic / hybrid →</a></p>
+  </main>
+
+  <div class="toast hidden" id="toast" role="status"><span id="toast-text"></span><button type="button" id="toast-action" class="hidden"></button></div>
+
+  <script src="/app.js" defer></script>
+</body>
+</html>

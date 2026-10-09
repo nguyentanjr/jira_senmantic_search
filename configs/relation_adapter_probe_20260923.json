@@ -1,0 +1,14 @@
+{
+  "purpose": "Development-only test of whether reviewed 2>0 preferences transfer across disjoint issue families",
+  "method": "Frozen E5 diagonal bilinear score residual, ridge regression on explicit pairwise margins",
+  "ridge_alpha": 1.0,
+  "target_margin": 0.05,
+  "feature_scale": "sqrt(embedding dimension)",
+  "training": "Only the 27 existing high-confidence grade 2 > grade 0 preferences; equal total weight per anchor; no in-batch negatives",
+  "validation": "Leave one connected issue component out, including all original proposal triples and all reviewed edges; no issue may cross folds",
+  "comparison": "Unchanged production hybrid versus same hybrid with learned dense score; same corpus, prefixes, candidate budget and BM25",
+  "metrics": "Known positive recall@10/@100; judged-only nDCG; known grade-0 exposure@10 and annotation coverage; macro explicit preference accuracy",
+  "go_no_go": "Research candidate only if mean known R@10 improves, no component loses known R@10, mean R@100 does not fall and held-out preference accuracy improves. Even passing does not authorize claiming an independent test win.",
+  "no_tuning": "One fixed setting. Do not sweep or retune on these outcomes. Do not touch protected test labels, model weights or production configuration.",
+  "latency": "Measure cached-vector search only; excludes embedding inference and is not end-to-end latency"
+}

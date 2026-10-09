@@ -1,0 +1,15 @@
+{
+  "purpose": "Follow-up hypothesis: useful-related grade 1 is a positive for similar-issue retrieval; strict duplicate-only training left most query families unused",
+  "method": "Same frozen E5 bilinear residual and same fixed ridge settings as strict-only probe; only training supervision coverage changes",
+  "ridge_alpha": 1.0,
+  "target_margin": 0.05,
+  "feature_scale": "sqrt(embedding dimension)",
+  "allowed_positive_grades": [1, 2],
+  "allowed_confidence": ["high", "medium"],
+  "training": "All explicit grade 1/2 > grade 0 comparisons with neither label low-confidence; equal anchor weight; grade 1 never a negative",
+  "validation": "Leave connected issue component out, including original proposals and all reviewed edges",
+  "comparison": "Production hybrid versus same hybrid with adapted dense scores",
+  "go_no_go": "Mean known R@10 improves, no component loses R@10, mean R@100 does not fall, held-out preference accuracy improves; research signal only",
+  "no_tuning": "One fixed setting, no alpha/margin sweep. Report this as a sequential exploratory experiment after strict-only failure, not independent confirmation.",
+  "latency": "Cached-vector search, excludes embedding inference"
+}

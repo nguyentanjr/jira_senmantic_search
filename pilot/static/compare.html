@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="So sánh các phương pháp tìm kiếm issue">
+  <title>So sánh tìm kiếm — Issue Lens</title>
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body class="compare-page">
+  <header class="topbar"><a class="brand" href="/" aria-label="Issue Lens, trang chủ"><span class="brand-mark" aria-hidden="true">IL</span><span><strong>Issue Lens</strong><small>Semantic search pilot</small></span></a></header>
+  <main>
+    <section class="hero"><a class="back-link" href="/">← Quay về tìm kiếm chính</a><div class="eyebrow" style="margin-top:24px">Ba cách xếp hạng, một truy vấn</div><h1>So sánh <em>kết quả tìm kiếm.</em></h1><p>Đối chiếu top 10 của BM25, e5 và kết hợp RRF. Các issue trùng giữa từ hai cột được đánh màu giống nhau.</p></section>
+    <form id="compare-form" class="compare-form">
+      <label for="query">Mô tả vấn đề (3–5.000 ký tự)<textarea id="query" minlength="3" maxlength="5000" required placeholder="Ví dụ: không nhận được OTP" autofocus></textarea></label>
+      <button id="submit-button" class="primary-button" type="submit"><span>Tìm</span><b aria-hidden="true">→</b></button>
+    </form>
+    <section id="compare-results" class="compare-columns hidden" aria-live="polite"></section>
+  </main>
+  <div class="toast hidden" id="toast" role="status"><span id="toast-text"></span></div>
+  <script src="/compare.js" defer></script>
+</body>
+</html>

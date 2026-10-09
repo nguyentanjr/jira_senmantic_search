@@ -1,0 +1,13 @@
+{
+  "purpose": "Recover similar issues by matching the observed defect separately from long full-ticket text",
+  "baseline": "Unchanged production issue hybrid top 100",
+  "defect_branch_document": "summary + sections.actual",
+  "defect_branch_query": "source issue summary + sections.actual",
+  "defect_branch_retriever": "BM25 with existing tokenizer, no accent folding, top 100 positive-score matches",
+  "fusion": "RRF k=60 over the complete baseline ranking (weight 1.0) and defect BM25 ranking (weight 0.5)",
+  "weight_rationale": "Treat defect-only evidence as a supporting branch while preserving the deployed hybrid as the primary system; one fixed value analogous to a half-strength auxiliary source",
+  "no_tuning": "No weight, k, field, or top-N sweep on these labels",
+  "evaluation": "40 AI-reviewed development queries; grade 1/2 relevant; unknown corpus items are not negatives",
+  "go_no_go": "Known macro R@10 improves, R@100 does not fall, no component loses R@10, judged-pool nDCG does not decrease, and known grade-0 exposure@10 does not increase",
+  "deployment": "Passing is a research signal only; failing leaves production unchanged"
+}
